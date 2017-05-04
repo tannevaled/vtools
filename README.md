@@ -50,4 +50,9 @@ cf http://linux.dell.com/repo/hardware/DSU_15.01.00/
 ```
 wget -q -O - http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash
 yum install dell-system-update
+yum install srvadmin-all
+```
+
+```
+racadm -r %s -u %s -p %s set system.thermalsettings.thirdpartypcifanresponse 0
 ```
