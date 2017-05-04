@@ -117,6 +117,13 @@ success
 success
 ```
 ### Services
+#### lldpd
+```
+[root@gateway-rstation ~]# yum -y install epel-release
+[root@gateway-rstation ~]# yum -y install lldpd
+[root@gateway-rstation ~]# systemctl enable lldpd
+[root@gateway-rstation ~]# systemctl start lldpd
+```
 #### dnsmasq
 ```
 [root@gateway-rstation ~]# cat /etc/dnsmasq.d/rstation.conf
