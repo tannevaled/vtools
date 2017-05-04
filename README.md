@@ -86,7 +86,7 @@ net.ipv4.ip_forward = 1
 [root@rstation-001 ~]# nmcli con up vstation
 ```
 ### Firewall
-
+#### set zones
 ```
 [root@gateway-rstation ~]# firewall-cmd --permanent --zone=external --add-interface=eth0 
 [root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-interface=eth1
@@ -96,12 +96,23 @@ internal
 external
   interfaces: eth0
 ```
+#### enable nat
 ```
 [root@gateway-rstation ~]# firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s $NET_RSTATION
+```
+#### open services
+```
 [root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-service=dns
 success
 [root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-service=dhcp
 success
+[root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-service=tftp
+success
+[root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-service=http
+success
+```
+#### reload
+```
 [root@gateway-rstation ~]# firewall-cmd --reload
 success
 ```
@@ -115,4 +126,11 @@ except-interface=eth0
 domain-needed
 
 dhcp-host=00:11:22:33:44:55,rstation-001.rstation.,10.xx.yy.1
+dhcp-host=01:12:23:34:45:56,rstation-002.rstation.,10.xx.yy.2
+```
+#### httpd
+```
+[root@gateway-rstation ~]# yum install httpd
+[root@gateway-rstation ~]# systemctl enable httpd
+[root@gateway-rstation ~]# systemctl start httpd
 ```
