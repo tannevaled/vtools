@@ -38,22 +38,14 @@ net.ipv4.ip_forward = 1
 ```
 ### Firewall
 ```
-[root@gateway-idrac ~]# firewall-cmd --zone=external --add-interface=eth0 --permanent
-[root@gateway-idrac ~]# firewall-cmd --zone=internal --add-interface=eth1 --permanent
+[root@gateway-idrac ~]# firewall-cmd --permanent --zone=external --add-interface=eth0 
+[root@gateway-idrac ~]# firewall-cmd --permanent --zone=internal --add-interface=eth1
 [root@gateway-idrac ~]# firewall-cmd --complete-reload
 [root@gateway-idrac ~]# firewall-cmd --list-all-zones
-[root@gateway-idrac ~]# firewall-cmd --zone=external --add-masquerade --permanent
+[root@gateway-idrac ~]# firewall-cmd --permanent --zone=external --add-masquerade
 [root@gateway-idrac ~]# firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s $NET_IDRAC
 ```
 ## rstation gateway config
-### Firewall
-```
-[root@gateway-rstation ~]# firewall-cmd --get-active-zones
-internal
-  interfaces: eth1
-external
-  interfaces: eth0
-```
 
 ### idrac
 #### racadm
@@ -88,4 +80,34 @@ net.ipv4.ip_forward = 1
 [root@rstation-001 ~]# nmcli con mod em1.3997 ipv4.method disabled ipv6.method ignore connection.master vstation connection.slave-type bridge
 [root@rstation-001 ~]# nmcli con up em1.3997
 [root@rstation-001 ~]# nmcli con up vstation
+```
+### Firewall
+
+```
+[root@gateway-rstation ~]# firewall-cmd --permanent --zone=external --add-interface=eth0 
+[root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-interface=eth1
+[root@gateway-rstation ~]# firewall-cmd --get-active-zones
+internal
+  interfaces: eth1
+external
+  interfaces: eth0
+```
+```
+[root@gateway-rstation ~]# firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s $NET_RSTATION
+[root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-service=dns
+success
+[root@gateway-rstation ~]# firewall-cmd --permanent --zone=internal --add-service=dhcp
+success
+[root@gateway-rstation ~]# firewall-cmd --reload
+success
+```
+### dnsmasq
+```
+[root@gateway-rstation ~]# cat /etc/dnsmasq.d/rstation.conf
+bind-interfaces
+except-interface=eth0
+
+domain-needed
+
+dhcp-host=00:11:22:33:44:55,rstation-001.rstation.,10.xx.yy.1
 ```
