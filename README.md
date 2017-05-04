@@ -77,7 +77,10 @@ net.ipv4.ip_forward = 1
 [root@rstation-001 ~]# nmcli con add type bridge ifname vstation con-name vstation
 [root@rstation-001 ~]# nmcli con mod vstation bridge.stp no ipv4.method disabled ipv6.method ignore
 [root@rstation-001 ~]# nmcli con add type vlan con-name em1.3997 dev em1 id 3997
-[root@rstation-001 ~]# nmcli con mod em1.3997 ipv4.method disabled ipv6.method ignore connection.master vstation connection.slave-type bridge
+[root@rstation-001 ~]# nmcli con mod em1.3997 ipv4.method disabled \
+                                              ipv6.method ignore \
+                                              connection.master vstation \
+                                              connection.slave-type bridge
 [root@rstation-001 ~]# nmcli con up em1.3997
 [root@rstation-001 ~]# nmcli con up vstation
 ```
