@@ -65,14 +65,15 @@ racadm -r %s -u %s -p %s set system.thermalsettings.thirdpartypcifanresponse 0
 [root@rstation-001 ~]# cat /etc/sysctl.d/00-ip_forward.conf
 net.ipv4.ip_forward = 1
 ```
-### em1.3996 vlan interface
+### Network
+#### em1.3996 vlan interface
 ```
 [root@rstation-001 ~]# nmcli con add type vlan con-name em1.3996 dev em1 id 3996
 [root@rstation-001 ~]# nmcli con mod em1.3996 ipv4.method manual ipv4.addresses $RSTATION_001_IP ipv4.gateway $RSTATION_GATEWAY
 [root@rstation-001 ~]# nmcli con up em1.3996
 
 ```
-### vstation bridge over em1.3997 vlan interface
+#### vstation bridge over em1.3997 vlan interface
 ```
 [root@rstation-001 ~]# nmcli con add type bridge ifname vstation con-name vstation
 [root@rstation-001 ~]# nmcli con mod vstation bridge.stp no ipv4.method disabled ipv6.method ignore
@@ -104,7 +105,8 @@ success
 [root@gateway-rstation ~]# firewall-cmd --reload
 success
 ```
-### dnsmasq
+### Services
+#### dnsmasq
 ```
 [root@gateway-rstation ~]# cat /etc/dnsmasq.d/rstation.conf
 bind-interfaces
