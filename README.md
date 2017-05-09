@@ -45,21 +45,19 @@ net.ipv4.ip_forward = 1
 [root@gateway-idrac ~]# firewall-cmd --permanent --zone=external --add-masquerade
 [root@gateway-idrac ~]# firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s $NET_IDRAC
 ```
-## rstation gateway config
-
 ### idrac
 #### racadm
 cf http://linux.dell.com/repo/hardware/DSU_15.01.00/
 ```
-wget -q -O - http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash
-yum install dell-system-update
-yum install srvadmin-all
+[root@gateway-idrac ~]# wget -q -O - http://linux.dell.com/repo/hardware/dsu/bootstrap.cgi | bash
+[root@gateway-idrac ~]# yum install dell-system-update
+[root@gateway-idrac ~]# yum install srvadmin-all
 ```
-
+Silence the fan of the DELL T130
 ```
-racadm -r %s -u %s -p %s set system.thermalsettings.thirdpartypcifanresponse 0
+[root@gateway-idrac ~]# racadm -r %s -u %s -p %s set system.thermalsettings.thirdpartypcifanresponse 0
 ```
-## rstation config
+## rstation gateway config
 ### sysctl
 ```
 [root@rstation-001 ~]# cat /etc/sysctl.d/00-ip_forward.conf
@@ -69,14 +67,18 @@ net.ipv4.ip_forward = 1
 #### em1.3996 vlan interface
 ```
 [root@rstation-001 ~]# nmcli con add type vlan con-name em1.3996 dev em1 id 3996
-[root@rstation-001 ~]# nmcli con mod em1.3996 ipv4.method manual ipv4.addresses $RSTATION_001_IP ipv4.gateway $RSTATION_GATEWAY
+[root@rstation-001 ~]# nmcli con mod em1.3996 ipv4.method manual \
+                                              ipv4.addresses $RSTATION_001_IP \
+                                              ipv4.gateway   $RSTATION_GATEWAY
 [root@rstation-001 ~]# nmcli con up em1.3996
 
 ```
 #### vstation bridge over em1.3997 vlan interface
 ```
 [root@rstation-001 ~]# nmcli con add type bridge ifname vstation con-name vstation
-[root@rstation-001 ~]# nmcli con mod vstation bridge.stp no ipv4.method disabled ipv6.method ignore
+[root@rstation-001 ~]# nmcli con mod vstation bridge.stp no \
+                                              ipv4.method disabled \
+                                              ipv6.method ignore
 [root@rstation-001 ~]# nmcli con add type vlan con-name em1.3997 dev em1 id 3997
 [root@rstation-001 ~]# nmcli con mod em1.3997 ipv4.method disabled \
                                               ipv6.method ignore \
